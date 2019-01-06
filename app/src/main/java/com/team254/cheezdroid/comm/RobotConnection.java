@@ -5,11 +5,10 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.team254.cheezdroid.RobotEventBroadcastReceiver;
+import com.team254.cheezdroid.Settings;
 import com.team254.cheezdroid.comm.messages.HeartbeatMessage;
 import com.team254.cheezdroid.comm.messages.OffWireMessage;
 import com.team254.cheezdroid.comm.messages.VisionMessage;
-
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,11 +20,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class RobotConnection {
-    public static final int K_ROBOT_PORT = 8254;
-    public static final String K_ROBOT_PROXY_HOST = "localhost";
-    public static final int K_CONNECTOR_SLEEP_MS = 100;
-    public static final int K_THRESHOLD_HEARTBEAT = 800;
-    public static final int K_SEND_HEARTBEAT_PERIOD = 100;
 
     private int m_port;
     private String m_host;
@@ -128,22 +122,22 @@ public class RobotConnection {
 
                     long now = System.currentTimeMillis();
 
-                    if (now - m_last_heartbeat_sent_at > K_SEND_HEARTBEAT_PERIOD) {
+                    if (now - m_last_heartbeat_sent_at > Settings.RobotConnection.K_SEND_HEARTBEAT_PERIOD) {
                         send(HeartbeatMessage.getInstance());
                         m_last_heartbeat_sent_at = now;
                     }
 
-                    if (Math.abs(m_last_heartbeat_rcvd_at - m_last_heartbeat_sent_at) > K_THRESHOLD_HEARTBEAT && m_connected) {
+                    if (Math.abs(m_last_heartbeat_rcvd_at - m_last_heartbeat_sent_at) > Settings.RobotConnection.K_THRESHOLD_HEARTBEAT && m_connected) {
                         m_connected = false;
                         broadcastRobotDisconnected();
                         broadcastWantVisionMode();
                     }
-                    if (Math.abs(m_last_heartbeat_rcvd_at - m_last_heartbeat_sent_at) < K_THRESHOLD_HEARTBEAT && !m_connected) {
+                    if (Math.abs(m_last_heartbeat_rcvd_at - m_last_heartbeat_sent_at) < Settings.RobotConnection.K_THRESHOLD_HEARTBEAT && !m_connected) {
                         m_connected = true;
                         broadcastRobotConnected();
                     }
 
-                    Thread.sleep(K_CONNECTOR_SLEEP_MS, 0);
+                    Thread.sleep(Settings.RobotConnection.K_CONNECTOR_SLEEP_MS, 0);
                 } catch (InterruptedException e) {
                 }
             }
@@ -158,7 +152,7 @@ public class RobotConnection {
     }
 
     public RobotConnection(Context context) {
-        this(context, K_ROBOT_PROXY_HOST, K_ROBOT_PORT);
+        this(context, Settings.RobotConnection.K_ROBOT_PROXY_HOST, Settings.RobotConnection.K_ROBOT_PORT);
     }
 
     synchronized private void tryConnect() {
