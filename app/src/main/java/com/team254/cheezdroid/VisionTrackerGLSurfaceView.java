@@ -4,7 +4,6 @@ import com.team254.cheezdroid.comm.CameraTargetInfo;
 import com.team254.cheezdroid.comm.RobotConnection;
 import com.team254.cheezdroid.comm.VisionUpdate;
 import com.team254.cheezdroid.comm.messages.TargetUpdateMessage;
-import com.team254.cheezdroid.comm.messages.VisionMessage;
 
 import org.opencv.android.BetterCamera2Renderer;
 import org.opencv.android.BetterCameraGLSurfaceView;
@@ -25,9 +24,10 @@ import java.util.HashMap;
 
 public class VisionTrackerGLSurfaceView extends BetterCameraGLSurfaceView implements BetterCameraGLSurfaceView.CameraTextureListener {
 
-    static final String LOGTAG = "VTGLSurfaceView";
-    protected int procMode = NativePart.DISP_MODE_TARGETS_PLUS;
     public static final String[] PROC_MODE_NAMES = new String[]{"Raw image", "Threshholded image", "Targets", "Targets plus"};
+    static final String LOGTAG = "VTGLSurfaceView";
+
+    protected int procMode = NativePart.DISP_MODE_TARGETS_PLUS;
     protected int frameCounter;
     protected long lastNanoTime;
     TextView mFpsText = null;
@@ -44,11 +44,13 @@ public class VisionTrackerGLSurfaceView extends BetterCameraGLSurfaceView implem
         settings.height = kHeight;
         settings.width = kWidth;
         settings.camera_settings = new HashMap<>();
-        settings.camera_settings.put(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
-        settings.camera_settings.put(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_OFF);
-        settings.camera_settings.put(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_OFF);
-        settings.camera_settings.put(CaptureRequest.SENSOR_EXPOSURE_TIME, 1000000L);
-        settings.camera_settings.put(CaptureRequest.LENS_FOCUS_DISTANCE, .2f);
+
+        settings.camera_settings.put(CaptureRequest.CONTROL_MODE, Settings.CameraSettings.CONTROL_MODE);
+        settings.camera_settings.put(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, Settings.CameraSettings.DIGITAL_STABILIZATION_MODE);
+        settings.camera_settings.put(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, Settings.CameraSettings.MECHANICAL_STABILIZATION_MODE);
+        settings.camera_settings.put(CaptureRequest.SENSOR_EXPOSURE_TIME, Settings.CameraSettings.EXPOSURE_TIME_NANOSECOND);
+        settings.camera_settings.put(CaptureRequest.LENS_FOCUS_DISTANCE, Settings.CameraSettings.FOCAL_LENGTH_M);
+
         return settings;
     }
 
@@ -128,8 +130,11 @@ public class VisionTrackerGLSurfaceView extends BetterCameraGLSurfaceView implem
         Pair<Integer, Integer> hRange = m_prefs != null ? m_prefs.getThresholdHRange() : blankPair();
         Pair<Integer, Integer> sRange = m_prefs != null ? m_prefs.getThresholdSRange() : blankPair();
         Pair<Integer, Integer> vRange = m_prefs != null ? m_prefs.getThresholdVRange() : blankPair();
-        NativePart.processFrame(texIn, texOut, width, height, procMode, hRange.first, hRange.second,
-                sRange.first, sRange.second, vRange.first, vRange.second, targetsInfo);
+        Log.i(LOGTAG, "hRange: (" + hRange.first + ", " + hRange.second + ")");
+        Log.i(LOGTAG, "sRange: (" + sRange.first + ", " + sRange.second + ")");
+        Log.i(LOGTAG, "vRange: (" + vRange.first + ", " + vRange.second + ")");
+        NativePart.processFrame(texIn, texOut, width, height, procMode, hRange.second, hRange.first,
+                sRange.second, sRange.first, vRange.second, vRange.first, targetsInfo);
 
         VisionUpdate visionUpdate = new VisionUpdate(image_timestamp);
         Log.i(LOGTAG, "Num targets = " + targetsInfo.numTargets);

@@ -35,7 +35,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.support.v4.app.ActivityCompat;
 
-import com.team254.cheezdroid.comm.RobotConnection;
 import com.team254.cheezdroid.comm.RobotConnectionStateListener;
 import com.team254.cheezdroid.comm.RobotConnectionStatusBroadcastReceiver;
 
@@ -64,6 +63,7 @@ public class VisionTrackerActivity extends Activity implements RobotConnectionSt
     private Long mLastSelfieLaunch = 0L;
 
     private boolean mIsRunning;
+    private String TAG;
 
     public static boolean isLocked() {
         return sLocked;
@@ -270,10 +270,12 @@ public class VisionTrackerActivity extends Activity implements RobotConnectionSt
 
         whitelistLockTasks();
 
-        Log.i("VisionActivity", "onCreate");
+        TAG = "VisionActivity";
+        Log.i(TAG, "onCreate");
     }
 
     private void tryStartCamera() {
+        Log.i(TAG, "tryStartCamera");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
