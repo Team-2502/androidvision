@@ -9,7 +9,7 @@ public class Settings {
         static final int CONTROL_MODE = CaptureRequest.CONTROL_MODE_OFF;
         static final int DIGITAL_STABILIZATION_MODE = CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_OFF;
         static final int MECHANICAL_STABILIZATION_MODE = CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_OFF;
-        static final long EXPOSURE_TIME_NANOSECOND = (long) 1e8;
+        static final long EXPOSURE_TIME_NANOSECOND = (long) 1e7;
         static final float FOCAL_LENGTH_M = .2f;
     }
 

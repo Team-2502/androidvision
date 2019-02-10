@@ -96,10 +96,10 @@ std::vector<TargetInfo> processImpl(int w, int h, int texOut, DisplayMode mode,
 
       // Filter based on size
       // Keep in mind width/height are in imager terms...
-      const double kMinTargetWidth = 20;
+      const double kMinTargetWidth = 0;
       const double kMaxTargetWidth = 300;
-      const double kMinTargetHeight = 6;
-      const double kMaxTargetHeight = 60;
+      const double kMinTargetHeight = 0;
+      const double kMaxTargetHeight = 300;
       if (target.width < kMinTargetWidth || target.width > kMaxTargetWidth ||
           target.height < kMinTargetHeight ||
           target.height > kMaxTargetHeight) {
@@ -110,8 +110,8 @@ std::vector<TargetInfo> processImpl(int w, int h, int texOut, DisplayMode mode,
       }
 
       // Filter based on shape
-      const double kMaxWideness = 7.0;
-      const double kMinWideness = 1.5;
+      const double kMaxWideness = 0.85;
+      const double kMinWideness = 0.3;
       double wideness = target.width / target.height;
       if (wideness < kMinWideness || wideness > kMaxWideness) {
         LOGD("Rejecting target due to shape : %.2lf", wideness);
